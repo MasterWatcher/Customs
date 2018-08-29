@@ -1,0 +1,12 @@
+
+var sketch = require('sketch')
+
+var document = sketch.getSelectedDocument()
+
+var layers = document.getLayersNamed('Colors')
+if (layers.length) {
+var groupLayers = layers[0].layers
+groupLayers.forEach(function (shape, i) {
+console.log(shape.name + ' ' + shape.style.fills[0].color)
+})
+}
