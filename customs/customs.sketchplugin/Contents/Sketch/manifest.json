@@ -4,20 +4,20 @@
   "icon": "icon.png",
   "commands": [
     {
-      "name": "my-command",
-      "identifier": "my-command-identifier",
-      "script": "my-command.js"
+      "name": "Export for iOS",
+      "identifier": "ios",
+      "script": "ios-export.js"
     }
   ],
   "menu": {
-    "title": "customs",
+    "title": "Customs",
     "items": [
-      "my-command-identifier"
+      "ios"
     ]
   },
   "version": "0.1.0",
-  "name": "customs",
-  "identifier": "customs",
+  "name": "Customs",
+  "identifier": "Customs",
   "disableCocoaScriptPreprocessor": true,
   "appcast": "https://raw.githubusercontent.com//master/.appcast.xml",
   "author": "Anton Goncharov",

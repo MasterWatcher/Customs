@@ -86,14 +86,14 @@ var exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/my-command.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/ios-export.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/my-command.js":
+/***/ "./src/ios-export.js":
 /*!***************************!*\
-  !*** ./src/my-command.js ***!
+  !*** ./src/ios-export.js ***!
   \***************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -101,6 +101,20 @@ var exports =
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
+  var colors = getColors();
+  var savePanel = NSSavePanel.savePanel();
+  savePanel.setNameFieldStringValue('Colors.xcassets');
+  savePanel.setAllowsOtherFileTypes(true);
+  savePanel.setExtensionHidden(false);
+
+  if (savePanel.runModal()) {
+    exportAsFile(colors, savePanel.URL());
+  }
+});
+
+function getColors() {
+  var result = [];
+
   var sketch = __webpack_require__(/*! sketch */ "sketch");
 
   var document = sketch.getSelectedDocument();
@@ -110,10 +124,59 @@ __webpack_require__.r(__webpack_exports__);
     var groupLayers = layers[0].layers;
     groupLayers.forEach(function (shape, i) {
       console.log(shape.name + ' ' + shape.style.fills[0].color);
-      context.document.showMessage(shape.name + ' ' + shape.style.fills[0].color);
+      result.push({
+        name: shape.name,
+        color: shape.style.fills[0].color
+      });
     });
+  } else {
+    context.document.showMessage('there is no folder "Colors" in the document');
   }
-});
+
+  return result;
+}
+
+function exportAsFile(colors, url) {
+  var manager = NSFileManager.defaultManager(); // var content = contentsJSON() 
+  // var path = url.path()
+  // var fileString = NSString.stringWithString(JSON.stringify(content, null, 4))
+  // fileString.writeToFile_atomically_encoding_error(path + "/Contents.json", true, NSUTF8StringEncoding, null)
+
+  colors.forEach(function (colorData, i) {
+    var content = contentsJSON(colorData);
+    var fileName = colorData.name + '.colorset';
+    var colorsetURL = url.URLByAppendingPathComponent(fileName);
+    manager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(colorsetURL.path(), true, null, null);
+    var path = colorsetURL.path();
+    var fileString = NSString.stringWithString(JSON.stringify(content, null, 4));
+    fileString.writeToFile_atomically_encoding_error(path + "/Contents.json", true, NSUTF8StringEncoding, null);
+  });
+}
+
+function contentsJSON(colorData) {
+  return {
+    info: {
+      version: 1,
+      author: "com.goncharov.sketch.customs"
+    },
+    colors: [colorObject(colorData)]
+  };
+}
+
+function colorObject(colorData) {
+  return {
+    idiom: "universal",
+    color: {
+      "color-space": "display-p3",
+      components: {
+        red: '0x' + colorData.color.substring(1, 3),
+        green: '0x' + colorData.color.substring(3, 5),
+        blue: '0x' + colorData.color.substring(5, 7),
+        alpha: '0x' + colorData.color.substring(7, 9)
+      }
+    }
+  };
+}
 
 /***/ }),
 
@@ -137,4 +200,4 @@ module.exports = require("sketch");
 }
 that['onRun'] = __skpm_run.bind(this, 'default')
 
-//# sourceMappingURL=my-command.js.map
+//# sourceMappingURL=ios-export.js.map

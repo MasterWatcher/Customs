@@ -5,7 +5,7 @@
     "sketch": ">=3.0"
   },
   "skpm": {
-    "name": "customs",
+    "name": "Customs",
     "manifest": "src/manifest.json",
     "main": "customs.sketchplugin",
     "assets": [
